@@ -1,4 +1,9 @@
 CHPLCC=chpl
 
-hello: src/main.chpl
-	chpl -o hello src/main.chpl
+chapel_project: src/main.chpl
+	chpl -o chapel_project src/main.chpl
+
+.PHONY: clean
+
+clean:
+	rm chapel_project
