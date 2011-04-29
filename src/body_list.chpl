@@ -11,9 +11,9 @@ use classes;
 //
 //	return r;
 //}
-proc body_get_num_from_file(infile: file): int
+proc body_get_num_from_file(infile: file): uint
 {
-	var r = infile.read(int);
+	var r = infile.read(uint);
 
 	return r;
 }
@@ -73,18 +73,14 @@ proc body_get_from_file(infile: file, inout b: body_geom_t)
 //
 //	return SUCCESS;
 //}
-proc body_get_list_from_file(filename: string, inout bodies: body_geom_t, inout num_bodies: uint)
+proc body_get_list_from_file(infile: file, inout bodies: [?D] body_geom_t)
 {
-	var infile = new file(filename,FileAccessMode.read);
 
-  infile.open();
+	for i in D do 
+    body_get_from_file(infile, bodies[i]);
 
-	num_bodies = body_get_num_from_file(infile);
-
-	for i in 0..num_bodies do
-		body_get_from_file(infile, bodies[i]);
-
-  infile.close();
+  for i in D do 
+    writeln("x", i, ": ", bodies[i].x);
 }
 
 //int body_get_num_from_filename(const char *filename, unsigned *num_bodies)
@@ -136,7 +132,7 @@ proc body_get_num_from_filename(filename: string, inout num_bodies: uint)
 //	
 //	return SUCCESS;
 //}
-proc dump_bodies_to_file(filename: string, bodies: body_geom_t, num_bodies: uint)
+proc dump_bodies_to_file(filename: string, bodies: [?D] body_geom_t, num_bodies: uint)
 {
 	var outfile = new file(filename,FileAccessMode.write);
 
@@ -144,7 +140,7 @@ proc dump_bodies_to_file(filename: string, bodies: body_geom_t, num_bodies: uint
 
   outfile.writeln(num_bodies);
 
-	for i in 0..num_bodies do
+	for i in D do
 		outfile.writeln(bodies[i].x, " ", bodies[i].y, " ", bodies[i].mass, " ", bodies[i].x_vel, " ", bodies[i].y_vel);
 
   outfile.close();

@@ -26,10 +26,14 @@ proc main
 	var infile = new file(input,FileAccessMode.read);
   infile.open();
   var num_bodies = body_get_num_from_file(infile);
+  var bodies: [0..num_bodies-1] body_geom_t;
+  for i in 0..num_bodies-1 do
+    bodies[i] = new body_geom_t();
+
+  body_get_list_from_file(infile, bodies);
   infile.close();
   writeln("num_bodies: ", num_bodies);
-	//body_get_list_from_file(infile, &bodies, (unsigned*) &num_bodies);
-
+  writeln(bodies);
 
 	//for (c = 0; c < iterations; c++) {
 	//
