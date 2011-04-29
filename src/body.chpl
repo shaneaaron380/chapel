@@ -1,4 +1,4 @@
-class Particle {
+class Body {
 	var x: real;			// x position
 	var y: real;			// y position
 	var mass: real = 1.0;	// mass

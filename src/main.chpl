@@ -20,7 +20,8 @@ proc main
 {
 	//Usage("command", 1);
 
-  writeln("iterations: ", iterations, " timestep: ", timestep, " input: ", input, " output: ", output, "\n");
+  writeln("iterations: ", iterations, " timestep: ", timestep, " input: ",
+		  input, " output: ", output, "\n");
 	set_calculations_timestep(timestep);
 
 	var infile = new file(input,FileAccessMode.read);
@@ -39,6 +40,6 @@ proc main
 	//
   //}
 
-	//return 0;
+  return 0;
 }
 
