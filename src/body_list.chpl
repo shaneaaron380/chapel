@@ -132,7 +132,7 @@ proc body_get_num_from_filename(filename: string, inout num_bodies: uint)
 //	
 //	return SUCCESS;
 //}
-proc dump_bodies_to_file(filename: string, bodies: [?D] body_geom_t, num_bodies: uint)
+proc dump_bodies_to_file(filename: string, bodies: [?D] body_geom_t, num_bodies: int)
 {
 	var outfile = new file(filename,FileAccessMode.write);
 
