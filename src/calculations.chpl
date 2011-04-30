@@ -1,6 +1,6 @@
-
 use Math;
 use classes;
+use tree;
 
 //static double delta_time = 1.0;
 var delta_time: real = 1.0;
@@ -11,6 +11,8 @@ var theta: real = 0.5;
 
 // given 2 bodies, v and t, the force and the resultant accleration enforced by
 // body v ON body t is given by the below function.
+//
+// t is updated in place
 //
 // from here:
 // http://www.cs.utexas.edu/users/akanksha/cs380p/leapfrog.txt
@@ -62,7 +64,7 @@ proc compute_accln(v: body_geom_t, inout t: body_geom_t ) {
 //    // Notes : From NVIDIA CUDA SDL
 //    // acceleration = force / mass;
 //    // new velocity = old velocity + acceleration * deltaTime
-//    // note: factor out the body's mass from the equation, here and in computeaccln
+//    // note: factor out the body's mass from the equation, here and in compute_accln
 //    // (because they cancel out).  Thus here force == acceleration
 //
 //	// deltaTime -> is the duration of movement of each body during a single
@@ -82,7 +84,7 @@ proc move_body(inout t: body_geom_t)
     // Notes : From NVIDIA CUDA SDL
     // acceleration = force / mass;
     // new velocity = old velocity + acceleration * deltaTime
-    // note: factor out the body's mass from the equation, here and in computeaccln
+    // note: factor out the body's mass from the equation, here and in compute_accln
     // (because they cancel out).  Thus here force == acceleration
 
 	// deltaTime -> is the duration of movement of each body during a single
@@ -130,15 +132,40 @@ proc move_body(inout t: body_geom_t)
 //{
 //	delta_time = timestep;
 //}
-proc MAC_acceptable(n: tree_node_t, b: body_geom_t): int
+proc MAC_acceptable(n: Node, b: body_geom_t): int
 {
-	var x: real = b.x - n.g.x;
-	var y: real = b.y - n.g.y;
+	var x: real = b.x - n.b.x;
+	var y: real = b.y - n.b.y;
 
-	return sqrt(x*x + y*y) > (1.0 * n.diam / theta);
+	/*return sqrt(x*x + y*y) > (1.0 * n.diam / theta);*/
+	return sqrt(x*x + y*y) > (2.0 * n.diam / theta);
 }
 
 proc set_calculations_timestep(timestep: real)
 {
 	delta_time = timestep;
+}
+
+// given a node and a body, calculate the force of the node (and all child
+// nodes) on the body.  this is the barnes-hut implementation -- if a node is
+// MAC acceptable, it just does the calculation, otherwise it opens the node
+// up and recurses down the tree
+//
+// note that if the given node is the root of the tree, this will make the
+// full barnes hut calculation for the body
+//
+// "b" is updated in place
+proc calculate_force_of_node_on_body(n: Node, b: body_geom_t) 
+{
+	if n.i_am_a_leaf() then {
+		compute_accln(n.b, b);
+	} else if MAC_acceptable(n, b) then {
+		compute_accln(n.b, b);
+	} else {
+		for c in n.children {
+			if c != nil then {
+				calculate_force_of_node_on_body(c, b);
+			}
+		}
+	}
 }

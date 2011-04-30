@@ -1,14 +1,17 @@
-use body;
+/*use body;*/
+use classes;
 
 var NW: int = 0;
 var NE: int = 1;
 var SW: int = 2;
 var SE: int = 3;
 
-class Limits {
+class Limits 
+{
 	var max_x, min_x, max_y, min_y: real;
 
-	proc Limits(bodies: [?D] Body) {
+	proc Limits(bodies: [?D] body_geom_t) 
+	{
 		max_x = bodies[0].x;
 		min_x = bodies[0].x;
 		max_y = bodies[0].y;
@@ -27,29 +30,34 @@ class Limits {
 		}
 	}
 
-	proc diam(): real {
+	proc diam(): real 
+	{
 		if max_x - min_x > max_y - min_y then 
 			return max_x - min_x;
 		else
 			return max_y - min_y;
 	}
 
-	proc quad_x(): real {
-		return (max_x - min_x) / 2.0;
+	proc quad_x(): real 
+	{
+		return (max_x + min_x) / 2.0;
 	}
 
-	proc quad_y(): real {
-		return (max_y - min_y) / 2.0;
+	proc quad_y(): real 
+	{
+		return (max_y + min_y) / 2.0;
 	}
 
 }
 
-proc print_tree(n: Node) {
+proc print_tree(n: Node) 
+{
 	writeln("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 	print_tree_iter(n, 1);
 }
 
-proc print_tree_iter(n: Node, level: int) {
+proc print_tree_iter(n: Node, level: int) 
+{
 	write(level, ": ", n.b.x, ",", n.b.y, "/", n.b.mass, "  (", n.quad_x, ",",
 			n.quad_y, ")/", n.diam, "    {");
 
@@ -65,8 +73,9 @@ proc print_tree_iter(n: Node, level: int) {
 
 }
 
-class Node {
-	var b: Body;
+class Node 
+{
+	var b: body_geom_t;
 
 	// quad_x/y is the center location of this node.  note that for a leaf node
 	// this doesn't matter, but for internal nodes, this is used to determine
@@ -80,7 +89,8 @@ class Node {
 
 
 	// given a new body, update my mass and center of mass with its numbers
-	proc update_mass_and_com(new_b: Body) {
+	proc update_mass_and_com(new_b: body_geom_t) 
+	{
 
 		var new_mass: real = b.mass + new_b.mass;
 
@@ -94,7 +104,8 @@ class Node {
 	}
 
 	// given a body, determine which quadrant of mine it belongs to
-	proc which_quadrant(new_b: Body): int {
+	proc which_quadrant(new_b: body_geom_t): int 
+	{
 		var which = NW;
 		if new_b.x <= quad_x then
 			if new_b.y >= quad_y then
@@ -108,7 +119,8 @@ class Node {
 				return SE;
 	}
 
-	proc i_am_a_leaf(): bool {
+	proc i_am_a_leaf(): bool 
+	{
 		return  (children[NW] == nil) && 
 				(children[NE] == nil) &&
 				(children[SW] == nil) &&
@@ -116,7 +128,8 @@ class Node {
 	}
 
 	
-	proc new_node_from_body(new_b: Body): Node { 
+	proc new_node_from_body(new_b: body_geom_t): Node 
+	{ 
 
 		/////////////////////////////////////// DEBUG
 		// make sure the body is actually in our area
@@ -143,17 +156,18 @@ class Node {
 
 		// the above line would be nice, but it doesn't copy new_b, it just
 		// references it, so we've got do make it hacky
-		var n: Node = new Node(diam = diam / 2.0);
-		n.b = new Body();
-		n.b.x = new_b.x;
-		n.b.y = new_b.y;
-		n.b.mass = new_b.mass;
-		n.b.x_vel = new_b.x_vel;
-		n.b.y_vel = new_b.y_vel;
-		n.b.x_accel = new_b.x_accel;
-		n.b.y_accel = new_b.y_accel;
 
+		/*var n: Node = new Node(diam = diam / 2.0);*/
+		/*n.b = new body_geom_t();*/
+		/*n.b.x = new_b.x;*/
+		/*n.b.y = new_b.y;*/
+		/*n.b.mass = new_b.mass;*/
+		/*n.b.x_vel = new_b.x_vel;*/
+		/*n.b.y_vel = new_b.y_vel;*/
+		/*n.b.x_accel = new_b.x_accel;*/
+		/*n.b.y_accel = new_b.y_accel;*/
 
+		var n: Node = new Node(b = copy_body(new_b), diam = diam / 2.0);
 
 		var new_quad = which_quadrant(new_b);
 
@@ -177,7 +191,8 @@ class Node {
 		return n;
 	}
 
-	proc split_leaf_into_two(new_b: Body) {
+	proc split_leaf_into_two(new_b: body_geom_t) 
+	{
 
 		assert(i_am_a_leaf());
 
@@ -195,7 +210,8 @@ class Node {
 	}
 
 	// this inserts a new body into one the appropriate child of this node.
-	proc insert(new_b: Body) {
+	proc insert(new_b: body_geom_t) 
+	{
 
 		if i_am_a_leaf() then {
 			split_leaf_into_two(new_b);
@@ -219,14 +235,18 @@ class Node {
 	// this creates a tree, using this node as the root.  this should be a
 	// separate function, but when i make it separate i get these 'invalid use
 	// of "new"' compilation errors, so i'm just putting it here
-	proc create(bodies: [?D] Body) {
+	proc create(bodies: [?D] body_geom_t) 
+	{
 
 		var l: Limits = new Limits(bodies);
+write("limits: ");
+writeln(l);
 
 		create(bodies, l.quad_x(), l.quad_y(), l.diam() + 2.0);
 	}
 
-	proc create(bodies: [?D] Body, x: real, y: real, desired_diam: real) {
+	proc create(bodies: [?D] body_geom_t, x: real, y: real, desired_diam: real) 
+	{
 
 		// make sure we're not calling this function on a node that already has
 		// children
@@ -236,11 +256,15 @@ class Node {
 		quad_x = x;
 		quad_y = y;
 
+write("root: "); writeln(this);
+
 		// make this node the root node with the first body
-		b = bodies[0];
+		b = copy_body(bodies[0]);
+/*print_tree(this);*/
 
 		for new_b in bodies(1..) {
 			insert(new_b);
+/*print_tree(this);*/
 		}
 
 	}

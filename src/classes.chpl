@@ -11,10 +11,30 @@
 //};
 //typedef struct body_geom_t body_geom_t;
 
-class body_geom_t {
-  var x, y, mass, x_vel, y_vel, x_accel, y_accel: real;
-}
+class body_geom_t 
+{
+	var x, y: real;				// position
+	var mass: real = 1.0;		// mass
+	var x_vel, y_vel: real;		// velocities
+	var x_accel, y_accel: real;	// used for force calculations
+};
 
+// return a copy of b.  i keep running into the case where simple assignmet
+// (like var b: body_geom_t = old_body) just ends up copying a reference
+proc copy_body(b: body_geom_t)
+{
+	var b2: body_geom_t = new body_geom_t();
+
+	b2.x = b.x;
+	b2.y = b.y;
+	b2.mass = b.mass;
+	b2.x_vel = b.x_vel;
+	b2.y_vel = b.y_vel;
+	b2.x_accel = b.x_accel;
+	b2.y_accel = b.y_accel;
+
+	return b2;
+}
 
 //struct tree_node_t {
 //	double diam;
@@ -27,7 +47,11 @@ class body_geom_t {
 //};
 //typedef struct tree_node_t tree_node_t;
 
-class tree_node_t {
+// ***NOTE
+// our chapel stuff is built around the Node class in tree.chpl -- so now that
+// the Node class is working we can use that instead of tree_node_t
+class tree_node_t 
+{
   var diam, quad_x, quad_y: real;
 	var g: body_geom_t;
 	var parent, padding: int;
