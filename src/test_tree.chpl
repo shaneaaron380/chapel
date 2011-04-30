@@ -31,7 +31,6 @@ proc main
 		b = new body_geom_t();
 	body_get_list_from_file(infile, bodies);
 	infile.close();
-	writeln("num_bodies: ", num_bodies);
 
 	barnes_hut_serial(iterations, timestep, bodies);
 
