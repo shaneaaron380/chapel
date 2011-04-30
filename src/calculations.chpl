@@ -198,6 +198,8 @@ proc barnes_hut_serial(iterations: int, timestep: int, bodies: [?D] body_geom_t)
 			b.x_accel = 0.0;
 			b.y_accel = 0.0;
 		}
+
+		delete_tree(tree);
 	}
 	t.stop();
 

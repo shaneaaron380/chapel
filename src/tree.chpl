@@ -50,6 +50,16 @@ class Limits
 
 }
 
+proc delete_tree(n: Node)
+{
+	for c in n.children do
+		if c != nil then
+			delete_tree(c);
+
+	delete n.b;
+	delete n;
+}
+
 proc print_tree(n: Node) 
 {
 	writeln("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -132,24 +142,24 @@ class Node
 	{ 
 
 		/////////////////////////////////////// DEBUG
-		// make sure the body is actually in our area
-		if ! (new_b.x <= (quad_x + (diam / 2.0))) then {
-			writeln("============================================= ERROR:");
-			writeln(new_b);
-			writeln(this);
-			writeln("=============================================");
-		}
-		assert(new_b.x <= (quad_x + (diam / 2.0)));
+		/*// make sure the body is actually in our area*/
+		/*if ! (new_b.x <= (quad_x + (diam / 2.0))) then {*/
+		/*    writeln("============================================= ERROR:");*/
+		/*    writeln(new_b);*/
+		/*    writeln(this);*/
+		/*    writeln("=============================================");*/
+		/*}*/
+		/*assert(new_b.x <= (quad_x + (diam / 2.0)));*/
 
-		assert(new_b.x >= (quad_x - (diam / 2.0)));
+		/*assert(new_b.x >= (quad_x - (diam / 2.0)));*/
 
-		if ! (new_b.y <= (quad_y + (diam / 2.0))) then {
-			writeln("ERROR:");
-			writeln("(",new_b.x,",",new_b.y, ") ", quad_y, " ", diam);
-		}
-		assert(new_b.y <= (quad_y + (diam / 2.0)));
+		/*if ! (new_b.y <= (quad_y + (diam / 2.0))) then {*/
+		/*    writeln("ERROR:");*/
+		/*    writeln("(",new_b.x,",",new_b.y, ") ", quad_y, " ", diam);*/
+		/*}*/
+		/*assert(new_b.y <= (quad_y + (diam / 2.0)));*/
 
-		assert(new_b.y >= (quad_y - (diam / 2.0)));
+		/*assert(new_b.y >= (quad_y - (diam / 2.0)));*/
 		/////////////////////////////////////// END DEBUG
 
 
@@ -240,6 +250,8 @@ class Node
 		var l: Limits = new Limits(bodies);
 
 		create(bodies, l.quad_x(), l.quad_y(), l.diam() + 0.1);
+
+		delete l;
 	}
 
 	proc create(bodies: [?D] body_geom_t, x: real, y: real, desired_diam: real) 
