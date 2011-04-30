@@ -5,6 +5,8 @@ for i in 10 50 100; do
 	outfile="obj/$(basename $infile).out"
 	goldfile="$(dirname $infile)/$(basename $infile .txt)_golden.txt"
 
+	[ -e $outfile ] && rm -rf $outfile
+
 	./test_app  --iterations=3 \
 				--timestep=1 \
 				--inputfile=$infile \

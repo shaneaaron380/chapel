@@ -180,7 +180,7 @@ proc barnes_hut_serial(iterations: int, timestep: int, bodies: [?D] body_geom_t)
 
 		var tree: Node = new Node(b = new body_geom_t(mass = 0.0));
 
-		tree.create(bodies);
+		tree.create(bodies, x = 0.0, y = 0.0, desired_diam = 9999.0 * 2);
 
 		for b in bodies {
 			calculate_force_of_node_on_body(tree, b);

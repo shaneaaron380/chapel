@@ -134,8 +134,10 @@ class Node
 		/////////////////////////////////////// DEBUG
 		// make sure the body is actually in our area
 		if ! (new_b.x <= (quad_x + (diam / 2.0))) then {
-			writeln("ERROR:");
-			writeln(new_b.x, " ", quad_x, " ", diam);
+			writeln("============================================= ERROR:");
+			writeln(new_b);
+			writeln(this);
+			writeln("=============================================");
 		}
 		assert(new_b.x <= (quad_x + (diam / 2.0)));
 
@@ -237,7 +239,7 @@ class Node
 	{
 		var l: Limits = new Limits(bodies);
 
-		create(bodies, l.quad_x(), l.quad_y(), l.diam() + 2.0);
+		create(bodies, l.quad_x(), l.quad_y(), l.diam() + 0.1);
 	}
 
 	proc create(bodies: [?D] body_geom_t, x: real, y: real, desired_diam: real) 

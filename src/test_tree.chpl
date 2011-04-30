@@ -18,9 +18,6 @@ proc Usage(prog_name: string, ret_val: int)
 
 proc main 
 {
-	writeln("iterations: ", iterations, " timestep: ", timestep, " inputfile: ",
-			inputfile, " outputfile: ", outputfile);
-
 	// this is done in barnes_hut_serial(), but we'll keep it here just in
 	// case
 	set_calculations_timestep(timestep);
