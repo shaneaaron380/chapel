@@ -44,12 +44,16 @@ def download(url, save_as):
 	an easy wrapper around saving a url to a file
 	"""
 	if call(['wget', '-O', save_as, url], stderr = PIPE) != 0:
-		raise Exception('could not download %s and save it to %s' % \
-				(url, save_as))
+		raise Exception('could not download %s to %s' % (url, save_as))
 
 def make_test_input_10():
 	download(
 		'http://www.cs.utexas.edu/users/akanksha/cs380p/assn5/input_10.dat',
+		this_func_input_name())
+
+def make_test_input_10_golden():
+	download(
+		'http://www.cs.utexas.edu/users/akanksha/cs380p/assn5/output_10.dat',
 		this_func_input_name())
 
 def make_test_input_50():
@@ -57,9 +61,39 @@ def make_test_input_50():
 		'http://www.cs.utexas.edu/users/akanksha/cs380p/assn5/input_50.dat',
 		this_func_input_name())
 
+def make_test_input_50_golden():
+	download(
+		'http://www.cs.utexas.edu/users/akanksha/cs380p/assn5/output_50.dat',
+		this_func_input_name())
+
 def make_test_input_100():
 	download(
 		'http://www.cs.utexas.edu/users/akanksha/cs380p/assn5/input_1000.dat',
+		this_func_input_name())
+
+def make_test_input_100_golden():
+	download(
+		'http://www.cs.utexas.edu/users/akanksha/cs380p/assn5/output_1000.dat',
+		this_func_input_name())
+
+def make_test_input_1():
+	download(
+		'http://www.cs.utexas.edu/users/akanksha/cs380p/assn5/test_input_1_v2.in',
+		this_func_input_name())
+
+def make_test_input_2():
+	download(
+		'http://www.cs.utexas.edu/users/akanksha/cs380p/assn5/test_input_2_v2.in',
+		this_func_input_name())
+
+def make_test_input_3():
+	download(
+		'http://www.cs.utexas.edu/users/akanksha/cs380p/assn5/test_input_3_v2.in',
+		this_func_input_name())
+
+def make_test_input_4():
+	download(
+		'http://www.cs.utexas.edu/users/akanksha/cs380p/assn5/test_input_4_v2.in',
 		this_func_input_name())
 
 def Usage(ret_val = 0):
