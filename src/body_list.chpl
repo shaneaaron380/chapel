@@ -77,10 +77,10 @@ proc body_get_list_from_file(infile: file, inout bodies: [?D] body_geom_t)
 {
 
 	for i in D do 
-    body_get_from_file(infile, bodies[i]);
+		body_get_from_file(infile, bodies[i]);
 
-  for i in D do 
-    writeln("x", i, ": ", bodies[i].x);
+	/*for i in D do */
+	/*    writeln("x", i, ": ", bodies[i].x);*/
 }
 
 //int body_get_num_from_filename(const char *filename, unsigned *num_bodies)
@@ -136,13 +136,14 @@ proc dump_bodies_to_file(filename: string, bodies: [?D] body_geom_t, num_bodies:
 {
 	var outfile = new file(filename,FileAccessMode.write);
 
-  outfile.open();
+	outfile.open();
 
-  outfile.writeln(num_bodies);
+	outfile.writeln(num_bodies);
 
 	for i in D do
-		outfile.writeln(bodies[i].x, " ", bodies[i].y, " ", bodies[i].mass, " ", bodies[i].x_vel, " ", bodies[i].y_vel);
+		outfile.writeln(bodies[i].x, " ", bodies[i].y, " ", bodies[i].mass, 
+				" ", bodies[i].x_vel, " ", bodies[i].y_vel);
 
-  outfile.close();
+	outfile.close();
 }
 

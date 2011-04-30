@@ -169,3 +169,31 @@ proc calculate_force_of_node_on_body(n: Node, b: body_geom_t)
 		}
 	}
 }
+
+// perform the full barnes hut calculation on a set of bodies in serial.  the
+// body list is modified in place
+proc barnes_hut_serial(iterations: int, timestep: int, bodies: [?D] body_geom_t)
+{
+	set_calculations_timestep(timestep);
+
+	for i in [0..iterations-1] {
+
+		var tree: Node = new Node(b = new body_geom_t(mass = 0.0));
+
+		tree.create(bodies);
+
+		for b in bodies {
+			calculate_force_of_node_on_body(tree, b);
+		}
+
+		for b in bodies {
+			move_body(b);
+		}
+
+		for b in bodies {
+			b.x_accel = 0.0;
+			b.y_accel = 0.0;
+		}
+	}
+
+}

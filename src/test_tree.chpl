@@ -51,10 +51,6 @@ proc main()
 		}
 
 		for b in test_p3 {
-			writeln(b.x, " ", b.y, " ", b.mass, " ", b.x_vel, " ", b.y_vel, " ");
-		}
-
-		for b in test_p3 {
 			b.x_accel = 0.0;
 			b.y_accel = 0.0;
 		}

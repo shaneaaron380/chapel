@@ -193,7 +193,6 @@ class Node
 
 	proc split_leaf_into_two(new_b: body_geom_t) 
 	{
-
 		assert(i_am_a_leaf());
 
 		// find the quadrant of MY center of mass
@@ -212,7 +211,6 @@ class Node
 	// this inserts a new body into one the appropriate child of this node.
 	proc insert(new_b: body_geom_t) 
 	{
-
 		if i_am_a_leaf() then {
 			split_leaf_into_two(new_b);
 
@@ -237,17 +235,13 @@ class Node
 	// of "new"' compilation errors, so i'm just putting it here
 	proc create(bodies: [?D] body_geom_t) 
 	{
-
 		var l: Limits = new Limits(bodies);
-write("limits: ");
-writeln(l);
 
 		create(bodies, l.quad_x(), l.quad_y(), l.diam() + 2.0);
 	}
 
 	proc create(bodies: [?D] body_geom_t, x: real, y: real, desired_diam: real) 
 	{
-
 		// make sure we're not calling this function on a node that already has
 		// children
 		assert(i_am_a_leaf());
@@ -256,15 +250,11 @@ writeln(l);
 		quad_x = x;
 		quad_y = y;
 
-write("root: "); writeln(this);
-
 		// make this node the root node with the first body
 		b = copy_body(bodies[0]);
-/*print_tree(this);*/
 
 		for new_b in bodies(1..) {
 			insert(new_b);
-/*print_tree(this);*/
 		}
 
 	}
