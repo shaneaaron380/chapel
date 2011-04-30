@@ -4,10 +4,10 @@ OBJ_DIR := obj
 TARGET := chapel_project
 
 $(TARGET): $(SOURCES)
-	chpl -o $@ src/main.chpl
+	$(CHPLCC) -o $@ src/main.chpl
 
 test_app: $(SOURCES)
-	chpl -o test_app src/test_tree.chpl
+	$(CHPLCC) -o test_app src/test_tree.chpl
 
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)

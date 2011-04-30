@@ -1,4 +1,5 @@
 use Math;
+use Time;
 use classes;
 use tree;
 
@@ -176,6 +177,9 @@ proc barnes_hut_serial(iterations: int, timestep: int, bodies: [?D] body_geom_t)
 {
 	set_calculations_timestep(timestep);
 
+	var t: Timer;
+
+	t.start();
 	for i in [0..iterations-1] {
 
 		var tree: Node = new Node(b = new body_geom_t(mass = 0.0));
@@ -195,5 +199,7 @@ proc barnes_hut_serial(iterations: int, timestep: int, bodies: [?D] body_geom_t)
 			b.y_accel = 0.0;
 		}
 	}
+	t.stop();
 
+	writeln("Elapsed time: ", t.elapsed());
 }

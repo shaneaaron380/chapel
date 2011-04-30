@@ -6,7 +6,7 @@ for i in {1..4}; do
 
 	[ -e $outfile ] && rm -rf $outfile
 
-	./chapel_project	--iterations=1 \
+	./chapel_project	--iterations=3 \
 						--timestep=1 \
 						--inputfile=$infile \
 						--outputfile=$outfile
