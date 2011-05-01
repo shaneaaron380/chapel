@@ -28,7 +28,7 @@ INPUTS_DUMMY := $(shell bin/inputs.py -D > test_inputs.D)
 inputs: $(INPUTS)
 	@echo -n "" # dummy command just so make doesn't whine
 
-test: test_app inputs | $(OBJ_DIR)
+test: $(TARGET) inputs | $(OBJ_DIR)
 	test/correctness.sh
 
 benchmark: $(TARGET) inputs | $(OBJ_DIR)
