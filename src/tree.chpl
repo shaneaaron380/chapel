@@ -46,14 +46,30 @@ proc print_tree_iter(n: Node, level: int)
 
 class NodePool
 {
-
-	var free_nodes: [1..64] Node;
-	var used_nodes: [1..64] Node;
+	var max_size = 64;
+	var node_dom = [0..max_size-1];
+	var nodes: [node_dom] Node;
+	var next: int = 0;
 
 	proc NodePool()
 	{
-		for n in free_nodes do n = new Node();
-		for n in used_nodes do n = new Node();
+		for n in nodes do n = new Node();
 	}
 
+	proc get()
+	{
+		next += 1;
+
+		if next >= max_size then {
+			node_dom = [0..2*max_size-1];
+			max_size *= 2;
+		}
+
+		return nodes[next - 1];
+	}
+
+	proc reset()
+	{
+		next = 0;
+	}
 }

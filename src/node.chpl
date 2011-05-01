@@ -5,7 +5,7 @@ var NE: int = 1;
 var SW: int = 2;
 var SE: int = 3;
 
-class Limits 
+class Limits
 {
 	var max_x, min_x, max_y, min_y: real;
 
@@ -55,13 +55,13 @@ class Limits_p : Limits
 
 	proc Limits_p(bodies: [?D] body_geom_t) 
 	{
-    cobegin {
-      max_x = max reduce [b in bodies] b.x; 
-      max_y = max reduce [b in bodies] b.y; 
-      min_x = min reduce [b in bodies] b.x; 
-      min_y = min reduce [b in bodies] b.y; 
-	  }
-  }
+		cobegin {
+			max_x = max reduce [b in bodies] b.x; 
+			max_y = max reduce [b in bodies] b.y; 
+			min_x = min reduce [b in bodies] b.x; 
+			min_y = min reduce [b in bodies] b.y; 
+		}
+	}
 
 }
 
