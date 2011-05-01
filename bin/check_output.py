@@ -32,8 +32,10 @@ def main():
 		cmp = c) )
 
 	def is_not_acceptable(a, b):
-		if str(round(float(a[0]), 2)) != str(round(float(b[0]), 2)) or \
-				str(round(float(a[1]), 2)) != str(round(float(b[1]), 2)):
+		p = 2 # precision
+		if str(round(float(a[0]), p)) != str(round(float(b[0]), p)) or \
+				str(round(float(a[1]), p)) != str(round(float(b[1]), p)):
+			#print 'ERROR:', str(round(float(a[0]), p)), str(round(float(a[1]), p)), str(round(float(b[0]), p)), str(round(float(b[1]), p))
 			sys.stderr.write('ERROR: %s != %s\n' % (str(a), str(b)))
 			return 1
 		else:
