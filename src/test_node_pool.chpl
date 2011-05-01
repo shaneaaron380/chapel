@@ -128,7 +128,7 @@ proc main()
 	// activity monitor and make sure memory isn't spilling out all over the
 	// place.  this test simulates how NodePool will be used in the barnes-hut
 	// calculation
-	for i in 0..16384-1 do {
+	for i in 0..4096-1 do {
 		np.reset();
 		var iter_start: Node_p = np.get();
 		iter_start.diam = i;

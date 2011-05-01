@@ -1,9 +1,16 @@
+use node_pool;
 use classes;
 
 var NW: int = 0;
 var NE: int = 1;
 var SW: int = 2;
 var SE: int = 3;
+
+var global_node_pool: NodePool = nil;
+proc set_global_node_pool(n: NodePool)
+{
+	global_node_pool = n;
+}
 
 class Limits
 {
@@ -451,3 +458,4 @@ class Node_p
 	}
 
 }
+
