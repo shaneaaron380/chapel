@@ -12,6 +12,12 @@ test_app: $(SOURCES)
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
 
+test_node_pool_app: $(SOURCES)
+	$(CHPLCC) -o $@ src/test_node_pool.chpl
+
+test_node_pool: test_node_pool_app
+	./test_node_pool_app
+
 clean:
 	rm -rf $(TARGET) test_app obj
 
