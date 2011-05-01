@@ -292,6 +292,7 @@ proc barnes_hut_parallel(iterations: int, timestep: int, bodies: [?D] body_geom_
 		}
 
 		coforall b in bodies {
+		//forall b in bodies {
 			b.x_accel = 0.0;
 			b.y_accel = 0.0;
 		}
