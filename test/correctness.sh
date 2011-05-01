@@ -1,18 +1,21 @@
 #! /bin/bash
 
+iterations=3
+timestep=1
+exe=./chapel_project
+
 for i in 10 50 100; do 
-	infile="inputs/test_input_${i}.txt"
-	outfile="obj/$(basename $infile).out"
-	goldfile="$(dirname $infile)/$(basename $infile .txt)_golden.txt"
+	inputfile="inputs/test_input_${i}.txt"
+	outputfile="obj/$(basename $inputfile).out"
+	goldfile="$(dirname $inputfile)/$(basename $inputfile .txt)_golden.txt"
 
-	[ -e $outfile ] && rm -rf $outfile
+	[ -e $outputfile ] && rm -rf $outputfile
 
-	./chapel_project    --iterations=3 \
-						--timestep=1 \
-						--inputfile=$infile \
-						--outputfile=$outfile
+	cmd="$exe --iterations=$iterations --timestep=$timestep --inputfile=$inputfile --outputfile=$outputfile"
+	echo "$cmd"
+	$cmd
 
-	bin/check_output.py $outfile $goldfile
+	bin/check_output.py $outputfile $goldfile
 
 done
 

@@ -18,8 +18,8 @@ proc Usage(prog_name: string, ret_val: int)
 
 proc main 
 {
-	writeln("iterations: ", iterations, " timestep: ", timestep, " inputfile: ",
-			inputfile, " outputfile: ", outputfile);
+	/*writeln("iterations: ", iterations, " timestep: ", timestep, " inputfile: ",*/
+	/*        inputfile, " outputfile: ", outputfile);*/
 
 	// this is done in barnes_hut_serial(), but we'll keep it here just in
 	// case
@@ -36,8 +36,8 @@ proc main
 	infile.close();
 	writeln("num_bodies: ", num_bodies);
 
-	//barnes_hut_serial(iterations, timestep, bodies);
-	barnes_hut_parallel(iterations, timestep, bodies);
+	barnes_hut_serial(iterations, timestep, bodies);
+	/*barnes_hut_parallel(iterations, timestep, bodies);*/
 
 	dump_bodies_to_file(outputfile,bodies,num_bodies);
 
