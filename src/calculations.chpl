@@ -53,6 +53,27 @@ proc compute_accln(v: body_geom_t, inout t: body_geom_t ) {
 	t.y_accel += mag * y;
 }
 
+proc compute_accln_p(v: body_geom_t, inout t: body_geom_t ) {
+
+	var x: real = v.x;
+	var y: real = v.y;
+  
+  cobegin {
+	  x -= t.x;
+	  y -= t.y;
+  }
+
+	var dist: real = x*x + y*y;
+	dist += soften;
+
+	dist = sqrt(dist * dist * dist);
+	var mag: real = v.mass / dist;
+
+  cobegin {
+	  t.x_accel += mag * x;
+	  t.y_accel += mag * y;
+  }
+}
 
 // the below function is used to move the body ONLY after the resultant
 // acceleration experienced by a body t by virtue of all other bodies is
@@ -90,20 +111,32 @@ proc move_body(inout t: body_geom_t)
 
 	// deltaTime -> is the duration of movement of each body during a single
 	// simulation of nbody system.
-  //cobegin {
     t.x_vel += t.x_accel * delta_time; 
     t.y_vel += t.y_accel * delta_time;
-  //}
 	// damping is used to control how much a body moves in free space
-  //cobegin {
     t.x_vel *= damping; 
     t.y_vel *= damping;
-  //}
 
-  //cobegin {
     t.x += t.x_vel * delta_time;
     t.y += t.y_vel * delta_time;
-  //}
+}
+
+proc move_body_p(inout t: body_geom_t) 
+{
+  cobegin {
+    t.x_vel += t.x_accel * delta_time; 
+    t.y_vel += t.y_accel * delta_time;
+  }
+	// damping is used to control how much a body moves in free space
+  cobegin {
+    t.x_vel *= damping; 
+    t.y_vel *= damping;
+  }
+
+  cobegin {
+    t.x += t.x_vel * delta_time;
+    t.y += t.y_vel * delta_time;
+  }
 }
 
 
@@ -147,6 +180,15 @@ proc MAC_acceptable(n: Node, b: body_geom_t): int
 	return sqrt(x*x + y*y) > (2.0 * n.diam / theta);
 }
 
+proc MAC_acceptable_p(n: Node_p, b: body_geom_t): int
+{
+	var x: real = b.x - n.b.x;
+	var y: real = b.y - n.b.y;
+	
+  /*return sqrt(x*x + y*y) > (1.0 * n.diam / theta);*/
+	return sqrt(x*x + y*y) > (2.0 * n.diam / theta);
+}
+
 proc set_calculations_timestep(timestep: real)
 {
 	delta_time = timestep;
@@ -171,6 +213,21 @@ proc calculate_force_of_node_on_body(n: Node, b: body_geom_t)
 		for c in n.children {
 			if c != nil then {
 				calculate_force_of_node_on_body(c, b);
+			}
+		}
+	}
+}
+
+proc calculate_force_of_node_on_body_p(n: Node_p, b: body_geom_t) 
+{
+	if n.i_am_a_leaf() then {
+		compute_accln(n.b, b);
+	} else if MAC_acceptable_p(n, b) then {
+		compute_accln(n.b, b);
+	} else {
+		for c in n.children {
+			if c != nil then {
+				calculate_force_of_node_on_body_p(c, b);
 			}
 		}
 	}
@@ -222,12 +279,12 @@ proc barnes_hut_parallel(iterations: int, timestep: int, bodies: [?D] body_geom_
 	t.start();
 	for i in [0..iterations-1] {
 
-		var tree: Node = new Node(b = new body_geom_t(mass = 0.0));
+		var tree: Node_p = new Node_p(b = new body_geom_t(mass = 0.0));
 
 		tree.create(bodies, x = 0.0, y = 0.0, desired_diam = 9999.0 * 2);
 
 		coforall b in bodies {
-			calculate_force_of_node_on_body(tree, b);
+			calculate_force_of_node_on_body_p(tree, b);
 		}
 
 		coforall b in bodies {
@@ -239,7 +296,7 @@ proc barnes_hut_parallel(iterations: int, timestep: int, bodies: [?D] body_geom_
 			b.y_accel = 0.0;
 		}
 
-		delete_tree(tree);
+		delete_tree_p(tree);
 	}
 	t.stop();
 
