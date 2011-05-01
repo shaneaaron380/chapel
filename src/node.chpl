@@ -391,12 +391,6 @@ class Node_p
 		assert(i_am_a_leaf());
     
     cobegin {
-		  // find the quadrant of MY center of mass
-		  var my_quad: int = which_quadrant(b);
-
-		  // find the quadrant of the new body's center of mass
-		  var new_quad: int = which_quadrant(new_b);
-
 		  // insert my current body as a child in the appropriate quadrant
 		  children[which_quadrant(b)] = new_node_from_body(b);
     }
