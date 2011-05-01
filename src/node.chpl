@@ -12,6 +12,29 @@ proc set_global_node_pool(n: NodePool)
 	global_node_pool = n;
 }
 
+proc print_tree_iter(n: Node_p, level: int) 
+{
+	write(level, ": ", n.b.x, ",", n.b.y, "/", n.b.mass, "  (", n.quad_x, ",",
+			n.quad_y, ")/", n.diam, "    {");
+
+	for c in n.children {
+		if c == nil then
+			write("    nil");
+		else
+			write("    ",c.b.x,",",c.b.y,"/",c.b.mass);
+	}
+	writeln("    }");
+
+	for c in n.children { if c != nil then print_tree_iter(c, level + 1); }
+
+}
+
+proc print_tree(n: Node_p) 
+{
+	writeln("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+	print_tree_iter(n, 1);
+}
+
 class Limits
 {
 	var max_x, min_x, max_y, min_y: real;
@@ -23,7 +46,6 @@ class Limits
 		max_y = bodies[0].y;
 		min_y = bodies[0].y;
 
-		//coforall b in bodies {
 		for b in bodies {
 
 			if (b.x > max_x) then max_x = b.x;
@@ -168,7 +190,10 @@ class Node
 		/*n.b.x_accel = new_b.x_accel;*/
 		/*n.b.y_accel = new_b.y_accel;*/
 
-		var n: Node = new Node(b = copy_body(new_b), diam = diam / 2.0);
+		/*var n: Node = new Node(b = copy_body(new_b), diam = diam / 2.0);*/
+		var n: Node = global_node_pool.get();
+		copy_body_to(new_b, n.b);
+		n.diam = diam / 2.0;
 
 		var new_quad = which_quadrant(new_b);
 
@@ -254,7 +279,8 @@ class Node
 		quad_y = y;
 
 		// make this node the root node with the first body
-		b = copy_body(bodies[0]);
+		/*b = copy_body(bodies[0]);*/
+		copy_body_to(bodies[0], b);
 
 		for new_b in bodies(1..) {
 			insert(new_b);
@@ -279,7 +305,6 @@ class Node_p
 
 	var children: [0..3] Node_p;
 
-
 	// given a new body, update my mass and center of mass with its numbers
 	proc update_mass_and_com(new_b: body_geom_t) 
 	{
@@ -287,10 +312,10 @@ class Node_p
 		var new_mass: real = b.mass + new_b.mass;
 
 		// center of mass (com)
-    cobegin {
-		  b.x = (b.x * b.mass + new_b.x * new_b.mass) / new_mass;
-		  b.y = (b.y * b.mass + new_b.y * new_b.mass) / new_mass;
-    }
+		/*cobegin {*/
+			b.x = (b.x * b.mass + new_b.x * new_b.mass) / new_mass;
+			b.y = (b.y * b.mass + new_b.y * new_b.mass) / new_mass;
+		/*}*/
 		// mass
 		b.mass = new_mass;
 
@@ -315,12 +340,12 @@ class Node_p
 	proc i_am_a_leaf(): bool 
 	{
 		return  (children[NW] == nil) && 
-				(children[NE] == nil) &&
-				(children[SW] == nil) &&
-				(children[SE] == nil);
+			(children[NE] == nil) &&
+			(children[SW] == nil) &&
+			(children[SE] == nil);
 	}
 
-	
+
 	proc new_node_from_body(new_b: body_geom_t): Node_p 
 	{ 
 
@@ -362,7 +387,10 @@ class Node_p
 		/*n.b.x_accel = new_b.x_accel;*/
 		/*n.b.y_accel = new_b.y_accel;*/
 
-		var n: Node_p = new Node_p(b = copy_body(new_b), diam = diam / 2.0);
+		/*var n: Node_p = new Node_p(b = copy_body(new_b), diam = diam / 2.0);*/
+		var n: Node_p = global_node_pool.get();
+		n.diam = diam / 1.0;
+		copy_body_to(new_b, n.b);
 
 		var new_quad = which_quadrant(new_b);
 
@@ -389,17 +417,17 @@ class Node_p
 	proc split_leaf_into_two(new_b: body_geom_t) 
 	{
 		assert(i_am_a_leaf());
-    
-    cobegin {
-		  // find the quadrant of MY center of mass
-		  var my_quad: int = which_quadrant(b);
 
-		  // find the quadrant of the new body's center of mass
-		  var new_quad: int = which_quadrant(new_b);
+		/*cobegin {*/
+			// find the quadrant of MY center of mass
+			var my_quad: int = which_quadrant(b);
 
-		  // insert my current body as a child in the appropriate quadrant
-		  children[which_quadrant(b)] = new_node_from_body(b);
-    }
+			// find the quadrant of the new body's center of mass
+			var new_quad: int = which_quadrant(new_b);
+
+			// insert my current body as a child in the appropriate quadrant
+			children[my_quad] = new_node_from_body(b);
+		/*}*/
 		// now that i'm an internal node, re-insert the new body into myself
 		insert(new_b);
 	}
@@ -409,14 +437,17 @@ class Node_p
 	{
 		if i_am_a_leaf() then {
 			split_leaf_into_two(new_b);
+writeln("splitting...");
 
 		} else {
 
 			var quad: int = which_quadrant(new_b);
 
 			if children[quad] == nil then {
+writeln("inserting into open child of internal node");
 				children[quad] = new_node_from_body(new_b);
 			} else {
+writeln("inserting recursively into child of internal node: ", children[quad]);
 				children[quad].insert(new_b);
 			}
 
@@ -443,16 +474,20 @@ class Node_p
 		// make sure we're not calling this function on a node that already has
 		// children
 		assert(i_am_a_leaf());
-    cobegin {
-		  diam = desired_diam;
-		  quad_x = x;
-		  quad_y = y;
-		  // make this node the root node with the first body
-		  b = copy_body(bodies[0]);
-    }
+		/*cobegin {*/
+			diam = desired_diam;
+			quad_x = x;
+			quad_y = y;
+			// make this node the root node with the first body
+			/*b = copy_body(bodies[0]);*/
+			copy_body_to(bodies[0], b);
+		/*}*/
+print_tree(this);
 
 		for new_b in bodies(1..) {
+writeln("body ", new_b);
 			insert(new_b);
+print_tree(this);
 		}
 
 	}

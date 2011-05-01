@@ -244,7 +244,9 @@ proc barnes_hut_serial(iterations: int, timestep: int, bodies: [?D] body_geom_t)
 	t.start();
 	for i in [0..iterations-1] {
 
-		var tree: Node = new Node(b = new body_geom_t(mass = 0.0));
+		/*var tree: Node = new Node(b = new body_geom_t(mass = 0.0));*/
+		var tree: Node = global_node_pool.get();
+		tree.b.mass = 0.0;
 
 		tree.create(bodies, x = 0.0, y = 0.0, desired_diam = 9999.0 * 2);
 
@@ -261,7 +263,7 @@ proc barnes_hut_serial(iterations: int, timestep: int, bodies: [?D] body_geom_t)
 			b.y_accel = 0.0;
 		}
 
-		delete_tree(tree);
+		/*delete_tree(tree);*/
 	}
 	t.stop();
 
@@ -279,9 +281,15 @@ proc barnes_hut_parallel(iterations: int, timestep: int, bodies: [?D] body_geom_
 	t.start();
 	for i in [0..iterations-1] {
 
-		var tree: Node_p = new Node_p(b = new body_geom_t(mass = 0.0));
+		global_node_pool.reset();
 
+		/*var tree: Node_p = new Node_p(b = new body_geom_t(mass = 0.0));*/
+		var tree: Node_p = global_node_pool.get();
+		tree.b.mass = 0.0;
+
+writeln("before creating tree");
 		tree.create(bodies, x = 0.0, y = 0.0, desired_diam = 9999.0 * 2);
+writeln("done creating tree");
 
 		coforall b in bodies {
 			calculate_force_of_node_on_body_p(tree, b);
@@ -296,7 +304,7 @@ proc barnes_hut_parallel(iterations: int, timestep: int, bodies: [?D] body_geom_
 			b.y_accel = 0.0;
 		}
 
-		delete_tree_p(tree);
+		/*delete_tree_p(tree);*/
 	}
 	t.stop();
 

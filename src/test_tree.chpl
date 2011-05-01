@@ -22,6 +22,9 @@ proc main
 	// case
 	set_calculations_timestep(timestep);
 
+	var np: NodePool = new NodePool();
+	set_global_node_pool(np);
+
 	var infile = new file(inputfile,FileAccessMode.read);
 	infile.open();
 	var num_bodies: int = body_get_num_from_file(infile):int;
@@ -33,6 +36,7 @@ proc main
 	infile.close();
 
 	barnes_hut_serial(iterations, timestep, bodies);
+	/*barnes_hut_parallel(iterations, timestep, bodies);*/
 
 	dump_bodies_to_file(outputfile,bodies,num_bodies);
 
