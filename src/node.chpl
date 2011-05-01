@@ -287,10 +287,10 @@ class Node_p
 		var new_mass: real = b.mass + new_b.mass;
 
 		// center of mass (com)
-    cobegin {
+    //cobegin {
 		  b.x = (b.x * b.mass + new_b.x * new_b.mass) / new_mass;
 		  b.y = (b.y * b.mass + new_b.y * new_b.mass) / new_mass;
-    }
+    //}
 		// mass
 		b.mass = new_mass;
 
@@ -390,7 +390,7 @@ class Node_p
 	{
 		assert(i_am_a_leaf());
     
-    cobegin {
+    //cobegin {
 		  // find the quadrant of MY center of mass
 		  var my_quad: int = which_quadrant(b);
 
@@ -399,7 +399,7 @@ class Node_p
 
 		  // insert my current body as a child in the appropriate quadrant
 		  children[which_quadrant(b)] = new_node_from_body(b);
-    }
+    //}
 		// now that i'm an internal node, re-insert the new body into myself
 		insert(new_b);
 	}
@@ -443,13 +443,12 @@ class Node_p
 		// make sure we're not calling this function on a node that already has
 		// children
 		assert(i_am_a_leaf());
-    cobegin {
-		  diam = desired_diam;
-		  quad_x = x;
-		  quad_y = y;
-		  // make this node the root node with the first body
-		  b = copy_body(bodies[0]);
-    }
+    
+    diam = desired_diam;
+		quad_x = x;
+		quad_y = y;
+		// make this node the root node with the first body
+		b = copy_body(bodies[0]);
 
 		for new_b in bodies(1..) {
 			insert(new_b);
