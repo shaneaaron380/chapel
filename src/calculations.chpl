@@ -90,15 +90,20 @@ proc move_body(inout t: body_geom_t)
 
 	// deltaTime -> is the duration of movement of each body during a single
 	// simulation of nbody system.
+  //cobegin {
     t.x_vel += t.x_accel * delta_time; 
     t.y_vel += t.y_accel * delta_time;
-
+  //}
 	// damping is used to control how much a body moves in free space
+  //cobegin {
     t.x_vel *= damping; 
     t.y_vel *= damping;
+  //}
 
+  //cobegin {
     t.x += t.x_vel * delta_time;
     t.y += t.y_vel * delta_time;
+  //}
 }
 
 
@@ -195,6 +200,41 @@ proc barnes_hut_serial(iterations: int, timestep: int, bodies: [?D] body_geom_t)
 		}
 
 		for b in bodies {
+			b.x_accel = 0.0;
+			b.y_accel = 0.0;
+		}
+
+		delete_tree(tree);
+	}
+	t.stop();
+
+	writeln("Elapsed time: ", t.elapsed());
+}
+
+// perform the full barnes hut calculation on a set of bodies in parallel.  the
+// body list is modified in place
+proc barnes_hut_parallel(iterations: int, timestep: int, bodies: [?D] body_geom_t)
+{
+	set_calculations_timestep(timestep);
+
+	var t: Timer;
+
+	t.start();
+	for i in [0..iterations-1] {
+
+		var tree: Node = new Node(b = new body_geom_t(mass = 0.0));
+
+		tree.create(bodies, x = 0.0, y = 0.0, desired_diam = 9999.0 * 2);
+
+		coforall b in bodies {
+			calculate_force_of_node_on_body(tree, b);
+		}
+
+		coforall b in bodies {
+			move_body(b);
+		}
+
+		coforall b in bodies {
 			b.x_accel = 0.0;
 			b.y_accel = 0.0;
 		}

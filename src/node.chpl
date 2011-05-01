@@ -16,6 +16,7 @@ class Limits
 		max_y = bodies[0].y;
 		min_y = bodies[0].y;
 
+		//coforall b in bodies {
 		for b in bodies {
 
 			if (b.x > max_x) then max_x = b.x;
@@ -46,6 +47,21 @@ class Limits
 	{
 		return (max_y + min_y) / 2.0;
 	}
+
+}
+
+class Limits_p : Limits 
+{
+
+	proc Limits_p(bodies: [?D] body_geom_t) 
+	{
+    cobegin {
+      max_x = max reduce [b in bodies] b.x; 
+      max_y = max reduce [b in bodies] b.y; 
+      min_x = min reduce [b in bodies] b.x; 
+      min_y = min reduce [b in bodies] b.y; 
+	  }
+  }
 
 }
 
@@ -240,4 +256,3 @@ class Node
 	}
 
 }
-

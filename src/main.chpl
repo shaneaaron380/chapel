@@ -36,10 +36,14 @@ proc main
 	infile.close();
 	writeln("num_bodies: ", num_bodies);
 
-	barnes_hut_serial(iterations, timestep, bodies);
+	//barnes_hut_serial(iterations, timestep, bodies);
+	barnes_hut_parallel(iterations, timestep, bodies);
 
 	dump_bodies_to_file(outputfile,bodies,num_bodies);
 
-	return 0;
+	for b in bodies do
+		delete b;
+	
+  return 0;
 }
 
