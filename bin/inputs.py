@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import sys,os,inspect
+import sys,os,inspect,urllib2
 from subprocess import call,PIPE
 
 INPUTS_DIR = 'inputs'
@@ -43,8 +43,7 @@ def download(url, save_as):
 	since many of our inputs are just downloaded from some url, this provides
 	an easy wrapper around saving a url to a file
 	"""
-	if call(['wget', '-O', save_as, url], stderr = PIPE) != 0:
-		raise Exception('could not download %s to %s' % (url, save_as))
+	open(save_as, 'w').write(urllib2.urlopen(url).read())
 
 def make_test_input_10():
 	download(
