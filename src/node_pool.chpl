@@ -1,5 +1,41 @@
 use node;
 
+class BodyPool
+{
+	var max_size = 128;
+	var body_dom = [0..max_size-1];
+	var bodies: [body_dom] body_geom_t;
+	var next: int = 0;
+
+	proc BodyPool()
+	{
+		for n in bodies do n = new body_geom_t();
+	}
+
+	proc get()
+	{
+		next += 1;
+
+		if next >= max_size then {
+			/*writeln("BodyPool resize triggered");*/
+			body_dom = [0..2*max_size-1];
+
+			for i in body_dom[max_size..8*max_size-1] do 
+				bodies[i] = new body_geom_t();
+
+			max_size *= 2;
+		}
+
+		return bodies[next - 1];
+	}
+
+	proc reset()
+	{
+		next = 0;
+	}
+
+}
+
 // it's just a pool of nodes that grows.  that's it.  it never frees them, but
 // if you call reset() then it will reuse the ones its already allocated.  this
 // is the same way we dished out nodes in our MPI implementation: we just have
@@ -14,8 +50,13 @@ class NodePool
 	var nodes: [node_dom] Node_p;
 	var next: int = 0;
 
+	// since there's never really a time where we'll need a node w/o a body, we
+	// can just create a body pool as well
+	var bp: BodyPool;
+
 	proc NodePool()
 	{
+		bp = new BodyPool();
 		for n in nodes do n = new Node_p();
 	}
 
@@ -24,6 +65,7 @@ class NodePool
 		next += 1;
 
 		if next >= max_size then {
+			/*writeln("NodePool resize triggered");*/
 			node_dom = [0..2*max_size-1];
 
 			for i in node_dom[max_size..8*max_size-1] do 
@@ -31,6 +73,8 @@ class NodePool
 
 			max_size *= 2;
 		}
+
+		nodes[next-1].b = bp.get();
 
 		for i in 0..3 do
 			nodes[next-1].children[i] = nil;
@@ -40,6 +84,7 @@ class NodePool
 
 	proc reset()
 	{
+		bp.reset();
 		next = 0;
 	}
 }
