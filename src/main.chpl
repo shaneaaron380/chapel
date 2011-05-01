@@ -8,7 +8,7 @@ use tree;
 config const iterations = 1;
 config const timestep = 1;
 config const inputfile = "in";
-config const outputfile = "out";
+config const outputfile = "none";
 
 proc Usage(prog_name: string, ret_val: int)
 {
@@ -39,7 +39,8 @@ proc main
 	barnes_hut_serial(iterations, timestep, bodies);
 	/*barnes_hut_parallel(iterations, timestep, bodies);*/
 
-	dump_bodies_to_file(outputfile,bodies,num_bodies);
+	if outputfile != "none" then
+		dump_bodies_to_file(outputfile,bodies,num_bodies);
 
 	for b in bodies do
 		delete b;

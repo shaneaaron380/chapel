@@ -14,7 +14,8 @@ for i in {1..4}; do
 	#                    --timestep=1 \
 	#                    --inputfile=$inputfile \
 	#                    --outputfile=$outputfile
-	cmd="$exe --iterations=$iterations --timestep=$timestep --inputfile=$inputfile --outputfile=$outputfile"
+	#cmd="$exe --iterations=$iterations --timestep=$timestep --inputfile=$inputfile --outputfile=$outputfile"
+	cmd="$exe --iterations=$iterations --timestep=$timestep --inputfile=$inputfile"
 	echo "$cmd"
 	$cmd
 
