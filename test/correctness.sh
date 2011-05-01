@@ -7,10 +7,10 @@ for i in 10 50 100; do
 
 	[ -e $outfile ] && rm -rf $outfile
 
-	./test_app  --iterations=3 \
-				--timestep=1 \
-				--inputfile=$infile \
-				--outputfile=$outfile
+	./chapel_project    --iterations=3 \
+						--timestep=1 \
+						--inputfile=$infile \
+						--outputfile=$outfile
 
 	bin/check_output.py $outfile $goldfile
 

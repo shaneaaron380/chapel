@@ -12,6 +12,12 @@ test_app: $(SOURCES)
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
 
+test_node_pool_app: $(SOURCES)
+	$(CHPLCC) -o $@ src/test_node_pool.chpl
+
+test_node_pool: test_node_pool_app
+	./test_node_pool_app
+
 clean:
 	rm -rf $(TARGET) test_app obj
 
@@ -22,7 +28,7 @@ INPUTS_DUMMY := $(shell bin/inputs.py -D > test_inputs.D)
 inputs: $(INPUTS)
 	@echo -n "" # dummy command just so make doesn't whine
 
-test: test_app inputs | $(OBJ_DIR)
+test: $(TARGET) inputs | $(OBJ_DIR)
 	test/correctness.sh
 
 benchmark: $(TARGET) inputs | $(OBJ_DIR)

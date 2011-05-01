@@ -19,19 +19,31 @@ class body_geom_t
 	var x_accel, y_accel: real;	// used for force calculations
 };
 
+proc copy_body_to(old_b: body_geom_t, new_b: body_geom_t)
+{
+	new_b.x = old_b.x;
+	new_b.y = old_b.y;
+	new_b.mass = old_b.mass;
+	new_b.x_vel = old_b.x_vel;
+	new_b.y_vel = old_b.y_vel;
+	new_b.x_accel = old_b.x_accel;
+	new_b.y_accel = old_b.y_accel;
+}
+
 // return a copy of b.  i keep running into the case where simple assignmet
 // (like var b: body_geom_t = old_body) just ends up copying a reference
 proc copy_body(b: body_geom_t)
 {
 	var b2: body_geom_t = new body_geom_t();
+	copy_body_to(b, b2);
 
-	b2.x = b.x;
-	b2.y = b.y;
-	b2.mass = b.mass;
-	b2.x_vel = b.x_vel;
-	b2.y_vel = b.y_vel;
-	b2.x_accel = b.x_accel;
-	b2.y_accel = b.y_accel;
+	/*b2.x = b.x;*/
+	/*b2.y = b.y;*/
+	/*b2.mass = b.mass;*/
+	/*b2.x_vel = b.x_vel;*/
+	/*b2.y_vel = b.y_vel;*/
+	/*b2.x_accel = b.x_accel;*/
+	/*b2.y_accel = b.y_accel;*/
 
 	return b2;
 }

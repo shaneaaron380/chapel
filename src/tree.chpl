@@ -11,6 +11,16 @@ proc delete_tree(n: Node)
 	delete n;
 }
 
+proc delete_tree_p(n: Node_p)
+{
+	for c in n.children do
+		if c != nil then
+			delete_tree_p(c);
+
+	delete n.b;
+	delete n;
+}
+
 proc print_tree(n: Node) 
 {
 	writeln("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -34,16 +44,3 @@ proc print_tree_iter(n: Node, level: int)
 
 }
 
-class NodePool
-{
-
-	var free_nodes: [1..64] Node;
-	var used_nodes: [1..64] Node;
-
-	proc NodePool()
-	{
-		for n in free_nodes do n = new Node();
-		for n in used_nodes do n = new Node();
-	}
-
-}
