@@ -401,15 +401,16 @@ class Node_p
 		} else {
 
 			var quad: int = which_quadrant(new_b);
+      
+      cobegin {
+			  if children[quad] == nil then {
+				  children[quad] = new_node_from_body(new_b);
+			  } else {
+				  children[quad].insert(new_b);
+			  }
 
-			if children[quad] == nil then {
-				children[quad] = new_node_from_body(new_b);
-			} else {
-				children[quad].insert(new_b);
-			}
-
-			update_mass_and_com(new_b);
-
+			  update_mass_and_com(new_b);
+      }
 		}
 
 	}
