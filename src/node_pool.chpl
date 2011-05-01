@@ -9,29 +9,35 @@ class BodyPool
 
 	proc BodyPool()
 	{
-		for n in bodies do n = new body_geom_t();
+		atomic {
+			for n in bodies do n = new body_geom_t();
+		}
 	}
 
 	proc get()
 	{
-		next += 1;
+		atomic {
+			next += 1;
 
-		if next >= max_size then {
-			/*writeln("BodyPool resize triggered");*/
-			body_dom = [0..2*max_size-1];
+			if next >= max_size then {
+				/*writeln("BodyPool resize triggered");*/
+				body_dom = [0..2*max_size-1];
 
-			for i in body_dom[max_size..8*max_size-1] do 
-				bodies[i] = new body_geom_t();
+				for i in body_dom[max_size..8*max_size-1] do 
+					bodies[i] = new body_geom_t();
 
-			max_size *= 2;
+				max_size *= 2;
+			}
+
+			return bodies[next - 1];
 		}
-
-		return bodies[next - 1];
 	}
 
 	proc reset()
 	{
-		next = 0;
+		atomic {
+			next = 0;
+		}
 	}
 
 }
@@ -47,7 +53,7 @@ class NodePool
 	// unit tests in test_node_pool.chpl
 	var max_size = 128;
 	var node_dom = [0..max_size-1];
-	var nodes: [node_dom] Node_p;
+	var nodes: [node_dom] Node;
 	var next: int = 0;
 
 	// since there's never really a time where we'll need a node w/o a body, we
@@ -56,36 +62,42 @@ class NodePool
 
 	proc NodePool()
 	{
-		bp = new BodyPool();
-		for n in nodes do n = new Node_p();
+		atomic {
+			bp = new BodyPool();
+			for n in nodes do n = new Node();
+		}
 	}
 
 	proc get()
 	{
-		next += 1;
+		atomic {
+			next += 1;
 
-		if next >= max_size then {
-			/*writeln("NodePool resize triggered");*/
-			node_dom = [0..2*max_size-1];
+			if next >= max_size then {
+				node_dom = [0..2*max_size-1];
 
-			for i in node_dom[max_size..8*max_size-1] do 
-				nodes[i] = new Node_p();
+				for i in node_dom[max_size..8*max_size-1] do 
+					nodes[i] = new Node();
 
-			max_size *= 2;
+				max_size *= 2;
+				/*writeln("NodePool resize triggered: ", max_size);*/
+			}
+
+			nodes[next-1].b = bp.get();
+
+			for i in 0..3 do
+				nodes[next-1].children[i] = nil;
+
+			return nodes[next - 1];
 		}
-
-		nodes[next-1].b = bp.get();
-
-		for i in 0..3 do
-			nodes[next-1].children[i] = nil;
-
-		return nodes[next - 1];
 	}
 
 	proc reset()
 	{
-		bp.reset();
-		next = 0;
+		atomic {
+			bp.reset();
+			next = 0;
+		}
 	}
 }
 

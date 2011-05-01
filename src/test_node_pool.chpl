@@ -4,9 +4,10 @@ use tree;
 // root.  so it builds a "tree" that's really more of just a linked list.  as
 // it does so, it sets the "diam" field of the node, starting at "val" and
 // incrementing as it goes
-proc add_n_children_inc_vals(np: NodePool, node: Node_p, n: int, val: real = 0): Node_p
+proc add_n_children_inc_vals(np: NodePool, node: Node, n: int, val: real = 0):
+	Node
 {
-	proc add_and_return(np: NodePool, node: Node_p, val: real): Node_p
+	proc add_and_return(np: NodePool, node: Node, val: real): Node
 	{
 		node.children[0] = np.get();
 		node.children[0].diam = val;
@@ -18,7 +19,7 @@ proc add_n_children_inc_vals(np: NodePool, node: Node_p, n: int, val: real = 0):
 	var cur_val: real = val;
 	node.diam = cur_val;
 	node.b.x = cur_val;
-	var cur: Node_p = node;
+	var cur: Node = node;
 
 	for i in 1..n-1 do {
 		cur_val += 1.0;
@@ -31,9 +32,10 @@ proc add_n_children_inc_vals(np: NodePool, node: Node_p, n: int, val: real = 0):
 // this function iteratively adds children (as child 0) with "node" as the
 // root.  so it builds a "tree" that's really more of just a linked list.  as
 // it does so, it sets the "diam" field of the node to "val"
-proc add_n_children_const_val(np: NodePool, node: Node_p, n: int, val: real = 5): Node_p
+proc add_n_children_const_val(np: NodePool, node: Node, n: int, val: real = 5):
+	Node
 {
-	proc add_and_return(np: NodePool, node: Node_p): Node_p
+	proc add_and_return(np: NodePool, node: Node): Node
 	{
 		node.children[0] = np.get();
 		node.children[0].diam = val;
@@ -44,7 +46,7 @@ proc add_n_children_const_val(np: NodePool, node: Node_p, n: int, val: real = 5)
 
 	node.diam = val;
 	node.b.x = val;
-	var cur: Node_p = node;
+	var cur: Node = node;
 	for i in 1..n-1 do {
 		cur = add_and_return(np, cur);
 	}
@@ -52,7 +54,7 @@ proc add_n_children_const_val(np: NodePool, node: Node_p, n: int, val: real = 5)
 	return cur;
 }
 
-proc print_vals(n: Node_p)
+proc print_vals(n: Node)
 {
 	write(n.diam, ' ');
 	if n.children[0] == nil then
@@ -64,7 +66,7 @@ proc print_vals(n: Node_p)
 proc main()
 {
 	var np = new NodePool();
-	var start: Node_p = np.get();
+	var start: Node = np.get();
 	var orig_max_size = np.max_size;
 	var orig_bp_max_size = np.bp.max_size;
 
@@ -76,7 +78,7 @@ proc main()
 	assert(orig_max_size == orig_bp_max_size);
 
 	// add just under the max size of children
-	var last: Node_p = add_n_children_inc_vals(np, start, np.max_size - 1);
+	var last: Node = add_n_children_inc_vals(np, start, np.max_size - 1);
 
 	// make sure there hasn't been a re-alloc
 	assert(np.max_size == orig_max_size);
@@ -88,7 +90,7 @@ proc main()
 	var max_bp_size_before_realloc: int = np.bp.max_size;
 
 	// now add another 16 to trigger a re-alloc
-	var node_at_realloc: Node_p = 
+	var node_at_realloc: Node = 
 		add_n_children_inc_vals(np, last, 16, last.diam);
 	assert(np.max_size == max_size_before_realloc * 2);
 	assert(np.bp.max_size == max_bp_size_before_realloc * 2);
@@ -123,7 +125,7 @@ proc main()
 
 		cur_node = cur_node.children[0];
 	}
-	var new_start: Node_p = np.get();
+	var new_start: Node = np.get();
 	assert(new_start.diam == start.diam);
 	assert(new_start.b.x == start.b.x);
 
@@ -153,19 +155,19 @@ proc main()
 	for i in 0..4096-1 do {
 	/*for i in 0..1000000-1 do {*/
 		np.reset();
-		var iter_start: Node_p = np.get();
+		var iter_start: Node = np.get();
 		iter_start.diam = i;
 		iter_start.b.x = i;
 
 		var num_children: int = 1024;
 
-		var iter_last: Node_p = add_n_children_inc_vals(np, iter_start,
+		var iter_last: Node = add_n_children_inc_vals(np, iter_start,
 				num_children, i);
 		/*writeln("====================");*/
 		/*print_vals(start);*/
 		/*writeln("--------------------");*/
 
-		var iter_cur: Node_p = iter_start;
+		var iter_cur: Node = iter_start;
 		for j in 0..num_children-1 do {
 			assert(iter_cur.diam == i+j);
 
