@@ -1,4 +1,11 @@
-assignment 6 chapel project
+CS380P Parallel Systems
+Assignment 6: Chapel
+
+Shane Mahon
+slip_hours_used: 35
+
+Aaron Stacy
+slip_hours_used: 29
 
 Test correctness for 10,100,1000 inputs:
 > make test
