@@ -1,1 +1,10 @@
 assignment 6 chapel project
+
+Test correctness for 10,100,1000 inputs:
+> make test
+
+Run benchmarks for parallel barnes-hut with 50000 10000 100000 inputs:
+> make benchmark
+
+Command-line for program:
+> chapel_project --iterations=3 --timestep=1 --inputfile=<infile> --outputfile=<outfile> --dataParIgnoreRunningTasks=true --dataParMinGranularity=20 --maxThreadsPerLocale=16
