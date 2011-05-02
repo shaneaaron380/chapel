@@ -15,7 +15,8 @@ for i in {1..4}; do
 	#                    --inputfile=$inputfile \
 	#                    --outputfile=$outputfile
 	#cmd="$exe --iterations=$iterations --timestep=$timestep --inputfile=$inputfile --outputfile=$outputfile"
-	cmd="$exe --iterations=$iterations --timestep=$timestep --inputfile=$inputfile"
+	#cmd="$exe --iterations=$iterations --timestep=$timestep --inputfile=$inputfile"
+	cmd="$exe --iterations=$iterations --timestep=$timestep --inputfile=$inputfile --outputfile=$outputfile --dataParIgnoreRunningTasks=true --dataParMinGranularity=20 --maxThreadsPerLocale=16"
 	echo "$cmd"
 	$cmd
 

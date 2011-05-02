@@ -13,7 +13,8 @@ for i in 10 50 100; do
 
 	#cmd="$exe --iterations=$iterations --timestep=$timestep --inputfile=$inputfile --outputfile=$outputfile"
 	#cmd="$exe --iterations=$iterations --timestep=$timestep --inputfile=$inputfile --outputfile=$outputfile --datapartasksperlocale=2 --dataparignorerunningtasks=true --dataparmingranularity=20"
-	cmd="$exe --iterations=$iterations --timestep=$timestep --inputfile=$inputfile --outputfile=$outputfile --dataParIgnoreRunningTasks=true --dataParMinGranularity=20"
+	#cmd="$exe --iterations=$iterations --timestep=$timestep --inputfile=$inputfile --outputfile=$outputfile --dataParIgnoreRunningTasks=true --dataParMinGranularity=20"
+	cmd="$exe --iterations=$iterations --timestep=$timestep --inputfile=$inputfile --outputfile=$outputfile --dataParIgnoreRunningTasks=true --dataParMinGranularity=20 --maxThreadsPerLocale=16"
 	echo "$cmd"
 	$cmd
 

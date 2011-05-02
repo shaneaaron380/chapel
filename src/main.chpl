@@ -37,7 +37,7 @@ proc main
 	writeln("num_bodies: ", num_bodies);
 
 	barnes_hut_serial(iterations, timestep, bodies);
-	/*barnes_hut_parallel(iterations, timestep, bodies);*/
+	//barnes_hut_parallel(iterations, timestep, bodies);
 
 	if outputfile != "none" then
 		dump_bodies_to_file(outputfile,bodies,num_bodies);
